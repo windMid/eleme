@@ -9,6 +9,16 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+const express = require('express')
+
+var app = express()
+var appdata = require('../data.json');
+var seller = appdata.seller
+var goods = appdata.goods
+var ratings = appdata.ratings
+var apiRoutes = express.Router() 
+
+app.use('/api/',apiRoutes);
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -42,6 +52,26 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
+    },
+    before(app) {
+      app.get('/seller',function(req, res) {
+        res.json({
+          errno: 0,
+          data: seller
+        });
+      }),
+      app.get('/goods',function(req, res) {
+        res.json({
+          errno: 0,
+          data: goods
+        });
+      }),
+      app.get('/ratings',function(req, res) {
+        res.json({
+          errno: 0,
+          data: ratings
+        });
+      })
     }
   },
   plugins: [
